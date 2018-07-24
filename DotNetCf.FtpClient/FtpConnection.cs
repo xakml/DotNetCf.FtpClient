@@ -206,6 +206,7 @@ namespace DotNetCf.FtpClient
             {
                 files.Add(line);
             }
+            
             cSocket.Close();
             readReply();
 
@@ -616,6 +617,7 @@ namespace DotNetCf.FtpClient
             {
                 throw new IOException(reply.Substring(4));
             }
+            sendCommand("NOOP");
         }
         #endregion
 
@@ -869,6 +871,49 @@ namespace DotNetCf.FtpClient
         public void GoToRootDirectory()
         {
             this.ChDir("./");
+        }
+
+        /// <summary>
+        /// Gets the size of a remote file
+        /// </summary>
+        /// <param name="path">The full or relative path of the file</param>
+        /// <returns>-1 if the command fails, otherwise the file size</returns>
+        public long GetFileSize(string file_path)
+        {
+            if (!this.logined)
+                this.Login();
+            this.sendCommand("SIZE " + file_path);
+            Console.WriteLine(this.reply);
+            return -1;
+        }
+
+        public byte[] SendCmd(string command)
+        {
+            if (!logined)
+                Login();
+            Socket cSocket = createDataSocket();
+
+            sendCommand(command);
+            Console.WriteLine(reply);
+            //if (!(retValue == 150 || retValue == 125))
+            //{
+            //    if (retValue == 226)
+            //    {
+            //        cSocket.Close();
+            //        Console.WriteLine(reply);
+            //        return null;
+            //    }
+            //    else
+            //        throw new IOException(reply.Substring(4));
+            //}
+
+            var data = this.ReadData(cSocket);
+            cSocket.Close();
+            readReply();
+            //System.Text.Encoding encoding = System.Text.Encoding.GetEncoding("UTF-8");
+
+            //string dir_files = encoding.GetString(data, 0, data.Length);
+            return data;
         }
     }
 }
