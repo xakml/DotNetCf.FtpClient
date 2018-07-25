@@ -1,1 +1,3 @@
 /DotNetCf.FtpClient/*.user
+/DotNetCf.FtpClient.Demo/*.user
+/DotNetCf.FtpClient/*.suo
